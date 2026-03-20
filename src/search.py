@@ -1,9 +1,15 @@
+from indexer import tokenize
+
+
 def print_word(index: dict, word: str) -> dict:
-    return index.get(word.lower(), {})
+    tokens = tokenize(word)
+    if not tokens:
+        return {}
+    return index.get(tokens[0], {})
 
 
 def find_pages(index: dict, query: str) -> list[dict]:
-    words = [w.lower() for w in query.split() if w.strip()]
+    words = tokenize(query)
 
     if not words:
         return []
