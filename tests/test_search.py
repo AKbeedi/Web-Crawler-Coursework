@@ -57,3 +57,20 @@ def test_find_empty_query():
     results = find_pages(index, "")
 
     assert results == []
+
+def test_find_results_sorted_by_score():
+    index = {
+        "hello": {
+            "page1": {"frequency": 3, "positions": [0, 1, 2]},
+            "page2": {"frequency": 1, "positions": [0]},
+        },
+        "world": {
+            "page1": {"frequency": 1, "positions": [3]},
+            "page2": {"frequency": 1, "positions": [1]},
+        },
+    }
+
+    results = find_pages(index, "hello world")
+
+    assert results[0]["url"] == "page1"
+    assert results[0]["score"] >= results[1]["score"]

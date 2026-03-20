@@ -1,3 +1,4 @@
+from math import log
 from indexer import tokenize
 
 
@@ -20,16 +21,32 @@ def find_pages(index: dict, query: str) -> list[dict]:
     page_sets = [set(index[word].keys()) for word in words]
     matching_pages = set.intersection(*page_sets)
 
+    # total number of unique pages in the whole index
+    all_pages = set()
+    for postings in index.values():
+        all_pages.update(postings.keys())
+    total_docs = len(all_pages)
+
     results = []
     for page in matching_pages:
-        score = sum(index[word][page]["frequency"] for word in words)
+        score = 0.0
+        matches = {}
+
+        for word in words:
+            posting = index[word][page]
+            tf = posting["frequency"]
+            df = len(index[word])  # how many pages contain this word
+
+            # simple TF-IDF-like score
+            idf = log((total_docs + 1) / (df + 1)) + 1
+            score += tf * idf
+
+            matches[word] = posting
+
         results.append({
             "url": page,
-            "score": score,
-            "matches": {
-                word: index[word][page]
-                for word in words
-            }
+            "score": round(score, 3),
+            "matches": matches
         })
 
     results.sort(key=lambda x: x["score"], reverse=True)

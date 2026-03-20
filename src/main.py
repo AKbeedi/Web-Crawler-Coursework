@@ -53,6 +53,8 @@ def main():
             else:
                 for r in results[:10]:
                     print(f"{r['url']} → score={r['score']}")
+                    for word, data in r["matches"].items():
+                        print(f"   {word}: freq={data['frequency']}, positions={data['positions']}")
 
         elif command in ["exit", "quit"]:
             print("Exiting.")
