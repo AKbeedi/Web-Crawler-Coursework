@@ -1,6 +1,7 @@
 from crawler import crawl_site
 from indexer import build_index, save_index, load_index
 from search import print_word, find_pages
+from indexer import build_index, save_index, load_index, tokenize
 
 
 INDEX_PATH = "data/index.json"
@@ -14,7 +15,7 @@ def main():
 
         if command == "build":
             print("Building index...")
-            pages = crawl_site(delay_seconds=1)  # change to 6 later
+            pages = crawl_site(delay_seconds=6)  # change to 6 later
             index = build_index(pages)
             save_index(index, INDEX_PATH)
             print("Index built and saved.")
@@ -25,21 +26,29 @@ def main():
                 print("Index loaded.")
             except FileNotFoundError:
                 print("No index file found. Run 'build' first.")
-
+        elif command == "print":
+            print("Please enter a word to print.")
         elif command.startswith("print "):
             if index is None:
                 print("Load or build index first.")
                 continue
 
-            word = command.split(" ", 1)[1]
+            word = command.split(" ", 1)[1].strip()
+            tokens = tokenize(word)
+
+            if len(tokens) != 1:
+                print("Please enter exactly one word.")
+                continue
+
             result = print_word(index, word)
 
             if not result:
                 print(f"No results for '{word}'")
             else:
                 for url, data in result.items():
-                    print(f"{url} → freq={data['frequency']}")
-
+                    print(f"{url} → freq={data['frequency']}, positions={data['positions']}")
+        elif command == "find":
+            print("Please enter a search query.")
         elif command.startswith("find "):
             if index is None:
                 print("Load or build index first.")

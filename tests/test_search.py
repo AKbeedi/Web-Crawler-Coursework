@@ -1,4 +1,6 @@
 from src.search import find_pages, print_word
+from src.indexer import build_index
+from src.search import find_pages
 import sys
 import os
 
@@ -74,3 +76,16 @@ def test_find_results_sorted_by_score():
 
     assert results[0]["url"] == "page1"
     assert results[0]["score"] >= results[1]["score"]
+
+
+def test_full_pipeline():
+    pages = [
+        {"url": "page1", "text": "hello world"},
+        {"url": "page2", "text": "world only"}
+    ]
+
+    index = build_index(pages)
+    results = find_pages(index, "hello")
+
+    assert len(results) == 1
+    assert results[0]["url"] == "page1"

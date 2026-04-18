@@ -3,10 +3,34 @@ import re
 
 
 def tokenize(text: str) -> list[str]:
+    """
+    Convert text into normalized tokens.
+
+    Lowercases the text and removes punctuation using regex.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        A list of cleaned word tokens.
+    """
     return re.findall(r"\b\w+\b", text.lower())
 
 
 def build_index(pages: list[dict]) -> dict:
+    """
+    Build an inverted index from crawled pages.
+
+    Maps each word to the pages it appears in, storing:
+    - frequency of occurrence
+    - positions within the page
+
+    Args:
+        pages: List of page dictionaries with 'url' and 'text'.
+
+    Returns:
+        A dictionary representing the inverted index.
+    """
     index = {}
 
     for page in pages:

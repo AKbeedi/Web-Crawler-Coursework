@@ -1,4 +1,5 @@
 from src.crawler import extract_page_text
+from src.crawler import find_next_page
 import sys
 import os
 
@@ -20,3 +21,15 @@ def test_extract_page_text_basic():
     assert "Test quote" in text
     assert "Author" in text
     assert "life" in text
+
+
+
+def test_find_next_page():
+    html = """
+    <li class="next">
+        <a href="/page/2/">Next</a>
+    </li>
+    """
+    next_page = find_next_page(html, "https://quotes.toscrape.com/page/1/")
+    assert next_page == "https://quotes.toscrape.com/page/2/"
+

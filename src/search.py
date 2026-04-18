@@ -10,6 +10,27 @@ def print_word(index: dict, word: str) -> dict:
 
 
 def find_pages(index: dict, query: str) -> list[dict]:
+    """
+    Search for pages matching a query using AND logic.
+
+    The query is tokenized and all words must be present in a page
+    for it to be included in the results.
+
+    Results are ranked using a TF-IDF-style scoring method:
+    - Term Frequency (TF): how often a word appears in a page
+    - Inverse Document Frequency (IDF): how rare the word is across pages
+
+    Args:
+        index: The inverted index.
+        query: The search query string.
+
+    Returns:
+        A list of matching pages sorted by relevance score.
+        Each result contains:
+        - 'url': page URL
+        - 'score': relevance score
+        - 'matches': word statistics for the page
+    """
     words = tokenize(query)
 
     if not words:

@@ -8,14 +8,47 @@ from bs4 import BeautifulSoup
 BASE_URL = "https://quotes.toscrape.com/"
 
 
-def fetch_page(url: str) -> str:
+def fetch_page(url: str) -> str | None:
+
+    """
+    Fetch the HTML content of a given URL.
+
+    Sends an HTTP GET request and returns the page content as text.
+
+    Args:
+        url: The URL of the page to fetch.
+
+    Returns:
+        The HTML content of the page as a string.
+
+    Raises:
+        requests.RequestException: If the request fails.
+    """
     print(f"Fetching: {url}")
-    response = requests.get(url, timeout=10)
-    response.raise_for_status()
-    return response.text
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        print(f"Failed to fetch {url}: {e}")
+        return None
 
 
 def extract_page_text(html: str) -> str:
+    """
+    Extract relevant text content from a page.
+
+    Parses the HTML and extracts:
+    - quote text
+    - author names
+    - tags
+
+    Args:
+        html: Raw HTML content of the page.
+
+    Returns:
+        A single string containing all extracted text.
+    """
     soup = BeautifulSoup(html, "html.parser")
 
     quotes = soup.select(".quote")
@@ -37,6 +70,19 @@ def extract_page_text(html: str) -> str:
 
 
 def find_next_page(html: str, current_url: str) -> str | None:
+    """
+    Find the URL of the next page using pagination.
+
+    Looks for the 'Next' button in the page and constructs
+    the absolute URL of the next page.
+
+    Args:
+        html: Raw HTML content of the current page.
+        current_url: The URL of the current page.
+
+    Returns:
+        The absolute URL of the next page, or None if no next page exists.
+    """
     soup = BeautifulSoup(html, "html.parser")
     next_link = soup.select_one("li.next a")
     if not next_link:
@@ -46,12 +92,29 @@ def find_next_page(html: str, current_url: str) -> str | None:
 
 
 def crawl_site(start_url: str = BASE_URL, delay_seconds: int = 6) -> list[dict]:
+    """
+    Crawl the target website and collect page data.
+
+    Visits pages sequentially using pagination, extracts text content,
+    and respects a politeness delay between requests.
+
+    Args:
+        start_url: The URL to start crawling from.
+        delay_seconds: Delay between requests to respect politeness.
+
+    Returns:
+        A list of dictionaries containing:
+        - 'url': the page URL
+        - 'text': extracted text content
+    """
     pages = []
     visited = set()
     current_url = start_url
 
     while current_url and current_url not in visited:
         html = fetch_page(current_url)
+        if html is None:
+            break
         text = extract_page_text(html)
 
         pages.append({
