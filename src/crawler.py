@@ -19,10 +19,8 @@ def fetch_page(url: str) -> str | None:
         url: The URL of the page to fetch.
 
     Returns:
-        The HTML content of the page as a string.
-
-    Raises:
-        requests.RequestException: If the request fails.
+        The HTML content of the page as a string,
+        or None if the request fails.
     """
     print(f"Fetching: {url}")
     try:
@@ -88,6 +86,9 @@ def find_next_page(html: str, current_url: str) -> str | None:
     if not next_link:
         return None
     href = next_link.get("href")
+    if not isinstance(href, str):
+        return None
+
     return urljoin(current_url, href)
 
 

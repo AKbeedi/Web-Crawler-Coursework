@@ -29,3 +29,6 @@ def test_build_index_positions():
     index = build_index(pages)
 
     assert index["a"]["page1"]["positions"] == [0, 2]
+    
+def test_tokenize_case_insensitive():
+    assert tokenize("Hello HELLO") == ["hello", "hello"]

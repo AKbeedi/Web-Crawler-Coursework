@@ -25,17 +25,18 @@ https://quotes.toscrape.com/
   - `print <word>` – display index entries for a word
   - `find <query>` – search for pages containing query terms
 - TF-IDF-style ranking for search results
-- Unit tests covering core functionality and edge cases
+- Unit and integration tests covering core functionality and edge cases
 
 ---
 
 ## Installation
 
 ### 1. Clone the repository
+
 ```bash
-git clone <your-repo-link>
-cd <your-repo-name>
-````
+git clone https://github.com/AKbeedi/Web-Crawler-Coursework.git
+cd Web-Crawler-Coursework
+```
 
 ### 2. Install dependencies
 
@@ -57,25 +58,25 @@ python src/main.py
 
 Build the index:
 
-```
+```text
 > build
 ```
 
 Load the index:
 
-```
+```text
 > load
 ```
 
 Print a word entry:
 
-```
+```text
 > print life
 ```
 
 Search for pages:
 
-```
+```text
 > find good friends
 ```
 
@@ -87,13 +88,13 @@ The system uses an inverted index mapping words to pages.
 
 Each word stores:
 
-* frequency of occurrence in each page
-* positions within the page
+- frequency of occurrence in each page
+- positions within the page
 
 Search results are ranked using a TF-IDF-style scoring approach:
 
-* Term Frequency (TF): number of times a word appears in a page
-* Inverse Document Frequency (IDF): reduces weight of common words across many pages
+- Term Frequency (TF): number of times a word appears in a page
+- Inverse Document Frequency (IDF): reduces weight of common words across many pages
 
 This improves the relevance of returned results.
 
@@ -101,18 +102,24 @@ This improves the relevance of returned results.
 
 ## Testing
 
-Run tests using:
+Run tests and coverage reporting using:
 
 ```bash
-python -m pytest
+python -m pytest --cov=src --cov-report=term-missing
 ```
+
+The test suite achieves approximately 79% coverage across the core logic modules.
 
 Tests include:
 
-* tokenization correctness
-* index construction (frequency and positions)
-* search functionality (single and multi-word queries)
-* edge cases (empty queries, missing terms)
+- HTML extraction and pagination handling
+- mocked HTTP request success/failure cases
+- tokenization and case-insensitive processing
+- index construction (frequency and positions)
+- search functionality (single and multi-word queries)
+- ranking behaviour
+- edge cases (empty queries, missing terms)
+- a simple full-pipeline integration test
 
 ---
 
@@ -122,14 +129,16 @@ Tests include:
 
 An inverted index was chosen to allow efficient search by mapping words directly to the pages that contain them, avoiding full document scans.
 
+A dictionary-of-dictionaries structure was used because dictionaries provide very fast lookup for both words and pages while also supporting storage of additional statistics such as frequency and positions.
+
 ### Tokenization
 
 Text is:
 
-* converted to lowercase
-* stripped of punctuation using regex
+- converted to lowercase
+- stripped of punctuation using regex
 
-This ensures consistent indexing and querying.
+This ensures consistent indexing and querying while making searches case-insensitive.
 
 ### Ranking
 
@@ -139,37 +148,40 @@ A TF-IDF-style scoring function is used to prioritise relevant pages over those 
 
 The crawler:
 
-* uses Requests for HTTP requests
-* uses BeautifulSoup for HTML parsing
-* follows pagination links
-* enforces a politeness delay of at least 6 seconds between requests
+- uses Requests for HTTP requests
+- uses BeautifulSoup for HTML parsing
+- follows pagination links
+- enforces a politeness delay of at least 6 seconds between requests
+
+The crawler is intentionally sequential rather than parallel to ensure the politeness requirement is respected.
 
 ---
 
 ## Limitations
 
-* Only crawls a single website
-* No parallel crawling (intentionally sequential for politeness)
-* Basic query handling (no phrase search or boolean operators)
-* Index stored as JSON (not optimised for large-scale data)
+- Only crawls a single website
+- No parallel crawling (intentionally sequential for politeness)
+- Basic query handling (no phrase search or boolean operators)
+- Index stored as JSON (not optimised for very large-scale data)
 
 ---
 
 ## Future Improvements
 
-* Phrase search support
-* Boolean queries (AND, OR, NOT)
-* More advanced ranking (full TF-IDF or BM25)
-* Caching crawled pages
-* Web-based interface instead of CLI
+- Phrase search support
+- Boolean queries (AND, OR, NOT)
+- More advanced ranking (full TF-IDF or BM25)
+- Caching crawled pages
+- Web-based interface instead of CLI
 
 ---
 
 ## Dependencies
 
-* requests
-* beautifulsoup4
-* pytest
+- requests
+- beautifulsoup4
+- pytest
+- pytest-cov
 
 ---
 
@@ -177,13 +189,11 @@ The crawler:
 
 Generative AI tools were used to assist with:
 
-* planning and structuring the project
-* debugging and resolving errors
-* improving code clarity and testing
+- planning and structuring the project
+- understanding ranking and search concepts
+- debugging and resolving errors
+- improving code clarity and testing
 
-All generated suggestions were reviewed, tested, and adapted to ensure full understanding of the implementation.
-
+All generated suggestions were critically reviewed, tested, and adapted to ensure full understanding of the implementation and compliance with the coursework requirements.
 
 ---
-
-
